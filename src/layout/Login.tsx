@@ -4,38 +4,37 @@ import { useAuth } from "../hooks/auth";
 
 interface LocationState {
     from: {
-      pathname: string;
+        pathname: string;
     };
-  }
+}
 
 const Login: React.FunctionComponent = (props) => {
-    const txtUsernameRef = useRef<HTMLInputElement>(null);
-    const txtPasswordRef = useRef<HTMLInputElement>(null);
-
-    const formSubmitHandler = (event: React.FormEvent) => {
-        event.preventDefault();
-        // const username = txtUsernameRef.current!.value;
-        // const password = txtPasswordRef.current!.value;
-        login();
-    };
-
     let history = useHistory();
     let location = useLocation<LocationState>();
     let auth = useAuth();
+    const txtUsernameRef = useRef<HTMLInputElement>(null);
+    const txtPasswordRef = useRef<HTMLInputElement>(null);
+
+    const formSubmitHandler = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const username = txtUsernameRef.current!.value;
+        const password = txtPasswordRef.current!.value;
+        const isLoggedIn = await auth.signin(username, password);
+
+        if (!isLoggedIn) {
+            return;
+        }
+
+        console.log("from", from);
+        if (from.pathname === "/") {
+            history.replace("/home");
+            return;
+        }
+
+        history.replace(from);
+    };
 
     let { from } = location.state || { from: { pathname: "/" } };
-
-    let login = () => {
-        auth.signin(() => {
-            console.log('from', from)
-            if (from.pathname === '/') {
-                history.replace('/home');
-                return;
-            }
-
-            history.replace(from);
-        });
-    };
 
     return (
         <form onSubmit={formSubmitHandler}>
@@ -51,7 +50,7 @@ const Login: React.FunctionComponent = (props) => {
             <div>
                 <label htmlFor="txtPassword">Password</label>
                 <input
-                    type="text"
+                    type="password"
                     name="txtPassword"
                     id="txtPassword"
                     ref={txtPasswordRef}

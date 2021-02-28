@@ -9,8 +9,9 @@ const Home: React.FunctionComponent = () => {
         <div>
             <h1>Welcome!</h1>
             <button
-                onClick={() => {
-                    auth.signout(() => history.push("/"));
+                onClick={async () => {
+                    await auth.signout();
+                    history.push("/");
                 }}
             >
                 Sign out

@@ -1,14 +1,59 @@
 import React, { useState, useContext, createContext } from "react";
+import Cookie from "js-cookie";
+import axios from "axios";
 
-const fakeAuth = {
+enum Role {
+    ADMIN = "ADMIN",
+    TEACHER = "TEACHER",
+    STUDENT = "STUDENT",
+    PARENT = "PARENT",
+}
+interface AccessTokenData {
+    userId: number;
+    email: string;
+    roles: Role[];
+}
+
+const login = async (username: string, password: string) => {
+    const result = await axios.post<AccessTokenData>(
+        "/login",
+        {
+            username,
+            password,
+        },
+        {
+            baseURL: "http://localhost:7070",
+        }
+    );
+
+    return result;
+};
+
+const logout = async () => {
+    await axios.get("/logout", {
+        baseURL: "http://localhost:7070",
+    });
+};
+
+const auth = {
     isAuthenticated: false,
-    signin(cb: Function) {
-        fakeAuth.isAuthenticated = true;
-        setTimeout(cb, 100); // fake async
+    async signin(username: string, password: string) {
+        try {
+            const response = await login(username, password);
+            auth.isAuthenticated = true;
+            return response.data;
+        } catch (error: unknown) {
+            auth.isAuthenticated = false;
+            return null;
+        }
     },
-    signout(cb: Function) {
-        fakeAuth.isAuthenticated = false;
-        setTimeout(cb, 100);
+    async signout() {
+        try {
+            auth.isAuthenticated = false;
+            await logout();
+        } catch (error) {
+            console.log(error);
+        }
     },
 };
 
@@ -24,20 +69,21 @@ export function useAuth() {
 }
 
 function useProvideAuth() {
-    const [user, setUser] = useState<string | null>(null);
+    const [user, setUser] = useState<AccessTokenData | null>(null);
 
-    const signin = (cb: Function) => {
-        return fakeAuth.signin(() => {
-            setUser("user");
-            cb();
-        });
+    const signin = async (username: string, password: string) => {
+        const user = await auth.signin(username, password);
+        if (user) {
+            setUser(user);
+            return true;
+        }
+
+        return false;
     };
 
-    const signout = (cb: Function) => {
-        return fakeAuth.signout(() => {
-            setUser(null);
-            cb();
-        });
+    const signout = async () => {
+        await auth.signout();
+        setUser(null);
     };
 
     return {
