@@ -23,6 +23,7 @@ const login = async (username: string, password: string) => {
         },
         {
             baseURL: "http://localhost:7070",
+            withCredentials: true
         }
     );
 
@@ -32,6 +33,7 @@ const login = async (username: string, password: string) => {
 const logout = async () => {
     await axios.get("/logout", {
         baseURL: "http://localhost:7070",
+        withCredentials: true
     });
 };
 
