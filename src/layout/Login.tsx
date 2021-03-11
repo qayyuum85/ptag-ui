@@ -37,29 +37,40 @@ const Login: React.FunctionComponent = (props) => {
     let { from } = location.state || { from: { pathname: "/" } };
 
     return (
-        <form onSubmit={formSubmitHandler}>
-            <div>
-                <label htmlFor="txtUsername">Username</label>
-                <input
-                    type="text"
-                    name="txtUsername"
-                    id="txtUsername"
-                    ref={txtUsernameRef}
-                />
+        <div className="h-screen flex bg-gray-bg1">
+            <div className="w-full max-w-md m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
+                <h1 className="text-2xl font-medium text-primary mt-4 mb-12 text-center">
+                    Login to your account
+                </h1>
+                <form onSubmit={formSubmitHandler}>
+                    <div>
+                        <label htmlFor="txtUsername">Username</label>
+                        <input
+                            type="text"
+                            name="txtUsername"
+                            id="txtUsername"
+                            ref={txtUsernameRef}
+                            className={`w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4`}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="txtPassword">Password</label>
+                        <input
+                            type="password"
+                            name="txtPassword"
+                            id="txtPassword"
+                            ref={txtPasswordRef}
+                            className={`w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4`}
+                        />
+                    </div>
+                    <div className="flex justify-center items-center mt-6">
+                        <button type="submit"
+                            className={`bg-green py-2 px-4 text-sm text-white rounded border border-green focus:outline-none focus:border-green-dark`}
+                        >Login</button>
+                    </div>
+                </form>
             </div>
-            <div>
-                <label htmlFor="txtPassword">Password</label>
-                <input
-                    type="password"
-                    name="txtPassword"
-                    id="txtPassword"
-                    ref={txtPasswordRef}
-                />
-            </div>
-            <div>
-                <button type="submit">Login</button>
-            </div>
-        </form>
+        </div>
     );
 };
 
